@@ -8,9 +8,9 @@ class BinarySearch {
 
     int middle = li + (hb - li) ~/ 2;
     if (key < list[middle])
-      return rank(key, list, li, middle);
+      return rank(key, list, li, middle - 1);
     else if (key > list[middle])
-      return rank(key, list, middle, hb);
+      return rank(key, list, middle + 1, hb);
     else
       return middle;
   }
@@ -20,4 +20,5 @@ main(List<String> args) {
   print(BinarySearch.initRank(1, [1, 2, 3, 4, 5, 6, 7, 8, 9]));
   print(BinarySearch.initRank(4, [1, 2, 3, 4, 5, 6, 7, 8, 9]));
   print(BinarySearch.initRank(7, [1, 2, 3, 4, 5, 6, 7, 8]));
+  print(BinarySearch.initRank(10, [1, 2, 3, 4, 5, 6, 7, 8]));
 }
