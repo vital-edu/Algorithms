@@ -5,4 +5,8 @@ class StdOut {
     stdout.write(x);
     stdout.flush();
   }
+
+  static void println(Object x) {
+    stdout.writeln(x);
+  }
 }
