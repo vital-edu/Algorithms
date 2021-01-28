@@ -3,6 +3,7 @@
 // of size .05 on the circumference of a circle, and then, with probability p
 // for each pair of points, draws a gray line connecting them.
 import 'dart:math';
+import 'package:algo/commons/slider_widget.dart';
 import 'package:flutter/material.dart';
 
 class Exercise31 extends StatefulWidget {
@@ -62,7 +63,7 @@ class _Exercise31State extends State<Exercise31> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            _Slider(
+            SliderWidget(
               min: 1,
               max: 360,
               divisions: 360,
@@ -70,7 +71,7 @@ class _Exercise31State extends State<Exercise31> {
               label: "Number of dots",
               onChangeValue: _changeDots,
             ),
-            _Slider(
+            SliderWidget(
               min: 0,
               max: 1,
               divisions: 100,
@@ -92,49 +93,6 @@ class _Exercise31State extends State<Exercise31> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _Slider<T> extends StatelessWidget {
-  final double min, max;
-  final T value;
-  final int divisions;
-  final String label;
-  final void Function(double) onChangeValue;
-  _Slider({
-    @required this.min,
-    @required this.max,
-    @required this.divisions,
-    @required this.value,
-    @required this.onChangeValue,
-    @required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SizedBox(
-          child: Text(label),
-          width: 110,
-        ),
-        Expanded(
-          child: Slider(
-            min: min,
-            max: max,
-            divisions: divisions,
-            value: double.parse(value.toString()),
-            onChanged: onChangeValue,
-          ),
-        ),
-        SizedBox(
-          child: Text(value.toString()),
-          width: 35,
-        ),
-      ],
     );
   }
 }
