@@ -5,11 +5,23 @@ class MenuWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        TextButton(
-          child: Text('Exercise 31'),
-          onPressed: () => Navigator.of(context).pushNamed('31'),
-        ),
+        _MenuItem('31'),
+        _MenuItem('32'),
       ],
+    );
+  }
+}
+
+class _MenuItem extends StatelessWidget {
+  final String exercise;
+
+  _MenuItem(this.exercise);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: Text('Exercise $exercise'),
+      onPressed: () => Navigator.of(context).pushNamed(exercise),
     );
   }
 }

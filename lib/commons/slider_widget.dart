@@ -17,28 +17,31 @@ class SliderWidget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SizedBox(
-          child: Text(label),
-          width: 110,
-        ),
-        Expanded(
-          child: Slider(
-            min: min,
-            max: max,
-            divisions: divisions,
-            value: double.parse(value.toString()),
-            onChanged: onChangeValue,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          SizedBox(
+            child: Text(label),
+            width: 10 * label.toString().length.toDouble(),
           ),
-        ),
-        SizedBox(
-          child: Text(value.toString()),
-          width: 35,
-        ),
-      ],
+          Expanded(
+            child: Slider(
+              min: min,
+              max: max,
+              divisions: divisions,
+              value: double.parse(value.toString()),
+              onChanged: onChangeValue,
+            ),
+          ),
+          SizedBox(
+            child: Text(value.toString()),
+            width: 10 * value.toString().length.toDouble(),
+          ),
+        ],
+      ),
     );
   }
 }
