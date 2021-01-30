@@ -95,12 +95,12 @@ class _Exercise32State extends State<Exercise32> {
               child: Text('Generate Histogram'),
               onPressed: _updateIntervals,
             ),
-            Center(
-              child: CustomPaint(
-                size: Size(400, 400),
-                painter: _HistogramPainter(
-                  context: context,
-                  intervals: intervals,
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                child: CustomPaint(
+                  painter: _HistogramPainter(
+                      intervals: intervals, totalItems: values.length),
                 ),
               ),
             ),
@@ -118,10 +118,16 @@ class _Exercise32State extends State<Exercise32> {
 
     for (double value in values) {
       for (int i = 0; i < intervals.length; i++) {
-        if (value >= i * boundary && value < (i + 1) * boundary) {
+        double min = i * boundary;
+        double max = (i + 1) * boundary;
+        if (value >= min && value < max) {
           intervals[i]++;
           break;
         }
+      }
+
+      if (value == range.end) {
+        intervals.last++;
       }
     }
 
@@ -131,22 +137,24 @@ class _Exercise32State extends State<Exercise32> {
 
 class _HistogramPainter extends CustomPainter {
   ValueNotifier<List<int>> intervals;
-  BuildContext context;
+  int totalItems;
 
   _HistogramPainter({
-    @required this.context,
+    // @required this.constraints,
     @required this.intervals,
+    @required this.totalItems,
   }) : super(repaint: intervals);
 
   @override
   void paint(Canvas canvas, Size size) {
+    double padding = 20;
     final double maxHeight = size.height;
     final double maxWidth = size.width;
 
     final List<int> intervals = this.intervals.value;
 
-    final widthBoundary = maxWidth / intervals.length - 10;
-    final heightBoundary = maxHeight / intervals.length;
+    final widthBoundary = (maxWidth - padding) / intervals.length;
+    final heightBoundary = maxHeight / totalItems;
 
     final Paint fillPaint = Paint()
       ..color = Colors.red
@@ -162,14 +170,15 @@ class _HistogramPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     canvas.drawLine(
-      Offset.zero,
-      Offset(0, maxHeight),
+      Offset(padding, 0),
+      Offset(padding, maxHeight),
       linePaint,
     );
 
-    for (int i = 0; i < intervals.length; i++) {
+    int i = 0;
+    for (; i < intervals.length; i++) {
       Rect rect = Rect.fromLTWH(
-        i * widthBoundary,
+        padding + i * widthBoundary,
         maxHeight - (heightBoundary * intervals[i]),
         widthBoundary,
         heightBoundary * intervals[i],
@@ -179,25 +188,30 @@ class _HistogramPainter extends CustomPainter {
 
       if (i == 0) continue;
 
-      TextSpan span = TextSpan(
-        text: i.toString(),
-        style: TextStyle(
-          color: Colors.black,
-        ),
-      );
-      TextPainter textPainter = TextPainter(
-        text: span,
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(
-          -12,
-          (maxHeight - heightBoundary * i) - 8,
-        ),
-      );
+      _drawNumber(i, y: (maxHeight - heightBoundary * i) - 8, canvas: canvas);
     }
+
+    for (; i < totalItems; i++) {
+      _drawNumber(i, y: (maxHeight - heightBoundary * i) - 8, canvas: canvas);
+    }
+  }
+
+  _drawNumber(int number, {@required double y, @required Canvas canvas}) {
+    TextSpan span = TextSpan(
+      text: number.toString(),
+      style: TextStyle(
+        color: Colors.black,
+      ),
+    );
+    TextPainter textPainter = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(0, y),
+    );
   }
 
   @override
