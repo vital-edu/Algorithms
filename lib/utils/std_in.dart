@@ -14,6 +14,7 @@ class StdIn {
     return vals;
   }
 
+  /// Deprecated: this method is incredible slow.
   static Stream<int> readInt() {
     return stdin.transform(utf8.decoder).expand((token) => _integerPattern
         .allMatches(token)

@@ -13,6 +13,7 @@
  */
 
 import 'package:algo/utils/std_in.dart';
+import 'package:algo/utils/in.dart';
 
 main(List<String> args) async {
   if (args == null || args.length != 1) {
@@ -24,7 +25,8 @@ main(List<String> args) async {
   Duration timeToRunBruteSearch = Duration();
   Duration timeToRunBinarySearch = Duration();
 
-  await for (int key in StdIn.readInt()) {
+  List<int> allInts = await StdIn.readAllInts();
+  for (int key in allInts) {
     timeToRunBruteSearch += trackDurationTime(
       () => BruteSearch.rank(key, arr),
     );
@@ -34,9 +36,9 @@ main(List<String> args) async {
   }
 
   print(
-      'Brute search ran in ${timeToRunBruteSearch.inMicroseconds} microseconds');
+      'Brute search ran in ${timeToRunBruteSearch.inMilliseconds} milliseconds');
   print(
-      'Binary search ran in ${timeToRunBinarySearch.inMicroseconds} microseconds');
+      'Binary search ran in ${timeToRunBinarySearch.inMilliseconds} milliseconds');
 }
 
 class BinarySearch {
