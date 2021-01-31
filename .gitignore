@@ -41,3 +41,5 @@ app.*.symbols
 app.*.map.json
 .fvm
 edu/
+data/
+**/*.java

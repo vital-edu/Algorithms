@@ -4,7 +4,8 @@ import 'dart:async';
 import 'dart:core';
 
 class StdIn {
-  static final RegExp whiteSpacePattern = RegExp(r'\s+');
+  static final RegExp _whiteSpacePattern = RegExp(r'\s+');
+  static final RegExp _integerPattern = RegExp(r'\d+');
 
   static Future<List<int>> readAllInts() async {
     List<String> fields = await readAllStrings();
@@ -14,17 +15,14 @@ class StdIn {
   }
 
   static Stream<int> readInt() {
-    stdin.echoMode = false;
-
-    return stdin
-        .transform(utf8.decoder)
-        .map((token) => int.tryParse(token))
-        .takeWhile((token) => token != null);
+    return stdin.transform(utf8.decoder).expand((token) => _integerPattern
+        .allMatches(token)
+        .map((match) => int.tryParse(match.group(0))));
   }
 
   static Future<List<String>> readAllStrings() async {
     String input = await readAll();
-    List<String> tokens = input.split(whiteSpacePattern);
+    List<String> tokens = input.split(_whiteSpacePattern);
     if (tokens.length == 0 || tokens[0].length > 0) return tokens;
 
     List<String> decapitokens = List<String>(tokens.length - 1);
