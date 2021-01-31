@@ -19,30 +19,37 @@ main(List<String> args) {
     numberOfShuffles = int.tryParse(args[1]) ?? numberOfShuffles;
   }
 
+  testShuffle(
+    shuffleMethod: shuffle,
+    sizeOfArray: sizeOfArray,
+    numberOfShuffles: numberOfShuffles,
+  );
+}
+
+testShuffle({Function shuffleMethod, int sizeOfArray, int numberOfShuffles}) {
   Map<double, List<int>> distribution = Map.fromIterable(
       List.generate(sizeOfArray, (i) => i.toDouble()),
       key: (i) => i,
       value: (_) => List.filled(sizeOfArray, 0));
 
-  // List.filled(sizeOfArray, List.generate(sizeOfArray, (_) => 0));
-
   for (int i = 0; i < numberOfShuffles; i++) {
     List<double> arr = List.generate(sizeOfArray, (i) => i.toDouble());
-    shuffle(arr);
-    updateDistribution(arr, distribution);
+    shuffleMethod(arr);
+    _updateDistribution(arr, distribution);
   }
 
-  printTable(distribution, numberOfShuffles: numberOfShuffles);
+  _printTable(distribution, numberOfShuffles: numberOfShuffles);
 }
 
-void updateDistribution(List<double> arr, Map<double, List<int>> distribution) {
+void _updateDistribution(
+    List<double> arr, Map<double, List<int>> distribution) {
   for (int i = 0; i < arr.length; i++) {
     double value = arr[i];
     distribution[value][i]++;
   }
 }
 
-void printTable(Map<double, List<int>> arr, {int numberOfShuffles}) {
+void _printTable(Map<double, List<int>> arr, {int numberOfShuffles}) {
   int pad = 5;
   print(
       'All cells should be close to ${(numberOfShuffles ~/ arr.length).toInt()}.\n');
