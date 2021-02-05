@@ -1,36 +1,97 @@
-// Instruction: Write a Point2D client that takes an integer value N from the
-// command line, generates N random points in the unit square, and computes the
-// distance separating the closest pair of points.
+import 'dart:async';
 
-import 'dart:math';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'exercise_1_cli.dart';
 
-import 'package:algo/utils/point_2d.dart';
+const LIMIT_OF_POINTS = 999999;
 
-Random random = Random();
-
-main(List<String> args) {
-  if (args == null || args.length != 1)
-    throw ArgumentError('an int argument be provided');
-
-  int n = int.tryParse(args.first);
-  if (n == null) throw ArgumentError('argument must be an integer');
-
-  List<Point2D> points = List.generate(n, (_) => _randomPoint2D());
-
-  final minimumPoint = Point2D.zero;
-  points.sort((first, second) {
-    final firstDistance = first.distanceTo(minimumPoint);
-    final secondDistance = second.distanceTo(minimumPoint);
-    return secondDistance.compareTo(firstDistance);
-  });
-
-  double minDistance = double.maxFinite;
-  for (int i = 1; i < n; i++) {
-    final newDistance = points[i - 1].distanceTo(points[i]);
-    minDistance = min(minDistance, newDistance);
-  }
-
-  print('Closet Distance: ${minDistance.toStringAsExponential()}');
+class Exercise1 extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _Exercise1State();
 }
 
-Point2D _randomPoint2D() => Point2D(random.nextDouble(), random.nextDouble());
+FutureOr<double> computeClosestDistance(int n) {
+  return PointsClosestDistanceCalculator.generatePoints(n).closestDistance;
+}
+
+class _Exercise1State extends State<Exercise1> {
+  TextEditingController _controller;
+  double _result;
+  bool _isCalculating = false;
+
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  _calculate() async {
+    setState(() {
+      _result = null;
+      _isCalculating = true;
+    });
+
+    int n = int.tryParse(_controller.text);
+    double value = await compute(computeClosestDistance, n);
+
+    setState(() {
+      _result = value;
+      _isCalculating = false;
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(labelText: 'Number of points'),
+                keyboardType: TextInputType.number,
+                controller: _controller,
+                onChanged: (String value) {
+                  int points = int.tryParse(value);
+                  if (points == null || points > LIMIT_OF_POINTS) {
+                    final validText = value.substring(0, value.length - 1);
+                    _controller.text = validText;
+                    _controller.selection = TextSelection.fromPosition(
+                      TextPosition(offset: validText.length),
+                    );
+                  }
+                },
+              ),
+              ElevatedButton(
+                child: Text('Calculate Closest Distance'),
+                onPressed: () {
+                  _calculate();
+                },
+              ),
+              if (_isCalculating) CircularProgressIndicator(),
+              if (!_isCalculating && _result != null)
+                Text('Closest Distance: $_result'),
+              CustomPaint(
+                  // painter: DotsPainter(),
+                  ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DotsPainter extends CustomPainter {
+  final int n;
+
+  DotsPainter(this.n);
+
+  @override
+  void paint(Canvas canvas, Size size) {}
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
