@@ -4,7 +4,6 @@
 // Run the test of the previous exercise for this version.
 
 import 'dart:math';
-import '../../../../utils/string_extension.dart';
 import 'exercise_36.dart';
 
 final random = Random();

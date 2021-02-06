@@ -3,11 +3,18 @@ import 'package:flutter/material.dart';
 class MenuWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        _MenuItem('31'),
-        _MenuItem('32'),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView(
+        children: [
+          Center(child: Text('Section 1')),
+          _MenuItem('31'),
+          _MenuItem('32'),
+          Divider(),
+          Center(child: Text('Section 2')),
+          _MenuItem('1'),
+        ],
+      ),
     );
   }
 }

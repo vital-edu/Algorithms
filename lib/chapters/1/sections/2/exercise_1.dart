@@ -11,8 +11,13 @@ class Exercise1 extends StatefulWidget {
   State<StatefulWidget> createState() => _Exercise1State();
 }
 
-FutureOr<double> computeClosestDistance(int n) {
-  return PointsClosestDistanceCalculator.generatePoints(n).closestDistance;
+FutureOr<double> _computeClosestDistance(
+    PointsClosestDistanceCalculator calculator) {
+  return calculator.closestDistance;
+}
+
+FutureOr<PointsClosestDistanceCalculator> _generateCalculator(n) {
+  return PointsClosestDistanceCalculator.generatePoints(n);
 }
 
 class _Exercise1State extends State<Exercise1> {
@@ -32,7 +37,9 @@ class _Exercise1State extends State<Exercise1> {
     });
 
     int n = int.tryParse(_controller.text);
-    double value = await compute(computeClosestDistance, n);
+    PointsClosestDistanceCalculator calculator =
+        await compute(_generateCalculator, n);
+    double value = await compute(_computeClosestDistance, calculator);
 
     setState(() {
       _result = value;
@@ -72,8 +79,8 @@ class _Exercise1State extends State<Exercise1> {
               if (!_isCalculating && _result != null)
                 Text('Closest Distance: $_result'),
               CustomPaint(
-                  // painter: DotsPainter(),
-                  ),
+                painter: DotsPainter(int.tryParse(_controller.text)),
+              ),
             ],
           ),
         ),

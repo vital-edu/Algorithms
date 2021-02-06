@@ -22,6 +22,8 @@ class PointsClosestDistanceCalculator {
   final List<Point2D> _points;
   double _closestDistance;
 
+  get points => _points;
+
   PointsClosestDistanceCalculator(this._points);
 
   factory PointsClosestDistanceCalculator.generatePoints(int n) {
