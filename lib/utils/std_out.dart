@@ -6,7 +6,7 @@ class StdOut {
     stdout.flush();
   }
 
-  static void println(Object x) {
+  static void println([Object x = '']) {
     stdout.writeln(x);
   }
 }
