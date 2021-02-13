@@ -2,28 +2,27 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../../../../utils/point_2d.dart';
 import 'exercise_1_cli.dart';
 
-const LIMIT_OF_POINTS = 999999;
+const LIMIT_OF_POINTS = 9999;
 
 class Exercise1 extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _Exercise1State();
 }
 
-FutureOr<double> _computeClosestDistance(
-    PointsClosestDistanceCalculator calculator) {
-  return calculator.closestDistance;
-}
-
 FutureOr<PointsClosestDistanceCalculator> _generateCalculator(n) {
-  return PointsClosestDistanceCalculator.generatePoints(n);
+  final calculator = PointsClosestDistanceCalculator.generatePoints(n);
+  calculator.closestDistance;
+  return calculator;
 }
 
 class _Exercise1State extends State<Exercise1> {
   TextEditingController _controller;
   double _result;
   bool _isCalculating = false;
+  PointsClosestDistanceCalculator _calculator;
 
   void initState() {
     super.initState();
@@ -31,19 +30,21 @@ class _Exercise1State extends State<Exercise1> {
   }
 
   _calculate() async {
+    int n = int.tryParse(_controller.text);
+    if (n == null) return;
+
     setState(() {
       _result = null;
       _isCalculating = true;
     });
 
-    int n = int.tryParse(_controller.text);
     PointsClosestDistanceCalculator calculator =
         await compute(_generateCalculator, n);
-    double value = await compute(_computeClosestDistance, calculator);
 
     setState(() {
-      _result = value;
+      _result = calculator.closestDistance;
       _isCalculating = false;
+      _calculator = calculator;
     });
   }
 
@@ -53,6 +54,7 @@ class _Exercise1State extends State<Exercise1> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextField(
                 decoration: InputDecoration(labelText: 'Number of points'),
@@ -78,9 +80,12 @@ class _Exercise1State extends State<Exercise1> {
               if (_isCalculating) CircularProgressIndicator(),
               if (!_isCalculating && _result != null)
                 Text('Closest Distance: $_result'),
-              CustomPaint(
-                painter: DotsPainter(int.tryParse(_controller.text)),
-              ),
+              if (_calculator != null)
+                Expanded(
+                  child: CustomPaint(
+                    painter: DotsPainter(_calculator),
+                  ),
+                ),
             ],
           ),
         ),
@@ -90,12 +95,46 @@ class _Exercise1State extends State<Exercise1> {
 }
 
 class DotsPainter extends CustomPainter {
-  final int n;
+  final PointsClosestDistanceCalculator calculator;
 
-  DotsPainter(this.n);
+  DotsPainter(this.calculator);
 
   @override
-  void paint(Canvas canvas, Size size) {}
+  void paint(Canvas canvas, Size size) {
+    if (calculator == null) return;
+    final points = calculator.points;
+    final closestPoints = calculator.closestPoints;
+
+    final paint = Paint()..color = Colors.red;
+    double circleSize;
+    if (points.length <= 100) {
+      circleSize = 3;
+    } else if (points.length <= 1000) {
+      circleSize = 2;
+    } else {
+      circleSize = 0.8;
+    }
+
+    final xScale = size.width;
+    final yScale = size.height;
+
+    for (Point2D point in points) {
+      final p = Offset(point.x * xScale, point.y * yScale);
+      canvas.drawCircle(p, circleSize, paint);
+    }
+
+    Offset pointA =
+        Offset(closestPoints[0].x * xScale, closestPoints[0].y * yScale);
+    Offset pointB =
+        Offset(closestPoints[1].x * xScale, closestPoints[1].y * yScale);
+
+    canvas.drawLine(
+        pointA,
+        pointB,
+        paint
+          ..color = Colors.blue
+          ..strokeWidth = circleSize);
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {

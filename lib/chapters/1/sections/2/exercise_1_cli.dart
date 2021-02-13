@@ -22,7 +22,9 @@ class PointsClosestDistanceCalculator {
   final List<Point2D> _points;
   double _closestDistance;
 
-  get points => _points;
+  List<Point2D> get points => _points;
+  List<Point2D> _closestPoints = [Point2D.zero, Point2D.zero];
+  List<Point2D> get closestPoints => _closestPoints;
 
   PointsClosestDistanceCalculator(this._points);
 
@@ -41,17 +43,22 @@ class PointsClosestDistanceCalculator {
   }
 
   _calculate() {
-    final minimumPoint = Point2D.zero;
-    _points.sort((first, second) {
-      final firstDistance = first.distanceTo(minimumPoint);
-      final secondDistance = second.distanceTo(minimumPoint);
-      return secondDistance.compareTo(firstDistance);
-    });
+    if (_points.length < 2) {
+      _closestDistance = 0;
+      _closestPoints = [_points.first, _points.first];
+      return;
+    }
 
     double minDistance = double.maxFinite;
-    for (int i = 1; i < _points.length; i++) {
-      final newDistance = _points[i - 1].distanceTo(_points[i]);
-      minDistance = min(minDistance, newDistance);
+    for (int i = 0; i < _points.length; i++) {
+      for (int j = 0; j < _points.length; j++) {
+        if (i == j) continue;
+        final newDistance = _points[i].distanceTo(_points[j]);
+        minDistance = min(minDistance, newDistance);
+        if (minDistance == newDistance) {
+          _closestPoints = [_points[i], _points[j]];
+        }
+      }
     }
 
     _closestDistance = minDistance;
