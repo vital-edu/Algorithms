@@ -55,5 +55,9 @@ class Point2D {
   String toString() => 'Point($x, $y)';
 
   @override
-  int get hashCode => _x.hashCode + _y.hashCode;
+  int get hashCode {
+    int hash1 = x.hashCode;
+    int hash2 = y.hashCode;
+    return 31 * hash1 + hash2;
+  }
 }
