@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:math' as math;
 
 import 'std_out.dart';
 
@@ -11,6 +12,7 @@ class Interval1D {
 
   final double _min;
   final double _max;
+
   Interval1D(double min, double max)
       : this._min = min,
         this._max = max {
@@ -22,6 +24,13 @@ class Interval1D {
     if (min > max) {
       throw new ArgumentError("Illegal interval");
     }
+  }
+
+  factory Interval1D.fromIterable(Iterable<num> iterable) {
+    if (iterable.length != 2)
+      throw ArgumentError(
+          'Invalid Iterable: length should be 2: ${iterable.length}');
+    return Interval1D(iterable.elementAt(0), iterable.elementAt(1));
   }
 
   double get min => _min;
@@ -44,11 +53,18 @@ class Interval1D {
     return '[$min, $max]';
   }
 
-  bool operator ==(covariant other) {
+  bool operator ==(covariant Interval1D other) {
     if (other == this) return true;
     if (other == null) return false;
     if (other.runtimeType != this.runtimeType) return false;
     return this.min == other.min && this.max == other.max;
+  }
+
+  Interval1D operator +(covariant Interval1D other) {
+    double start = math.min(this.min, other.min);
+    double end = math.max(this.max, other.max);
+
+    return Interval1D(start, end);
   }
 
   @override
@@ -121,4 +137,6 @@ void main(List<String> args) {
   intervals.sort(Interval1D.LENGTH_ORDER);
   for (int i = 0; i < intervals.length; i++) StdOut.println(intervals[i]);
   StdOut.println();
+
+  Interval1D.fromIterable([1, 2, 3, 4]);
 }
