@@ -46,6 +46,10 @@ class Interval1D {
     return (min <= x) && (x <= max);
   }
 
+  bool containsInterval(Interval1D other) {
+    return this.min <= other.min && this.max >= other.max;
+  }
+
   double get length => max - min;
 
   @override
