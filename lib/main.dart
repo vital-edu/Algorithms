@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'chapters/1/sections/1/exercise_31.dart';
 import 'chapters/1/sections/1/exercise_32.dart';
 import 'chapters/1/sections/2/exercise_1.dart';
+import 'chapters/1/sections/2/exercise_3.dart';
 import 'menu.dart';
 
 void main() {
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
         '31': (_) => Exercise31(),
         '32': (_) => Exercise32(),
         '1': (_) => Exercise1(),
+        '3': (_) => Exercise3(),
         'menu': (_) => MenuWidget(),
       },
     );

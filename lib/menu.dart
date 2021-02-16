@@ -13,6 +13,7 @@ class MenuWidget extends StatelessWidget {
           Divider(),
           Center(child: Text('Section 2')),
           _MenuItem('1'),
+          _MenuItem('3'),
         ],
       ),
     );
