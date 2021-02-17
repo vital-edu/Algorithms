@@ -1,3 +1,28 @@
+typedef VoidCallback = void Function();
+
+class ExpectedExceptionNotRaised extends Error {
+  final Error error;
+  ExpectedExceptionNotRaised([this.error]);
+
+  @override
+  String toString() {
+    if (error == null) {
+      return 'ExpectedExceptionNotRaised: an error was expected but was not raised';
+    }
+    return 'ExpectedExceptionNotRaised: an error was expected but was not raised: $error';
+  }
+}
+
+class ExceptionRaised extends Error {
+  final Error error;
+  ExceptionRaised(this.error);
+
+  @override
+  String toString() {
+    return 'ExceptionRaised: an error was raised but was not expected: $error';
+  }
+}
+
 class Assert {
   static equal<T>(T a, T b) {
     assert(a == b, '$a != $b');
@@ -14,6 +39,29 @@ class Assert {
         deepEqual(itA, itB);
       } on TypeError {
         equal(a.elementAt(i), b.elementAt(i));
+      }
+    }
+  }
+
+  static notRaiseException(VoidCallback block) {
+    try {
+      block();
+    } catch (e) {
+      throw ExceptionRaised(e);
+    }
+  }
+
+  static raiseException(VoidCallback block, {Pattern errorMessage}) {
+    try {
+      block();
+      throw ExpectedExceptionNotRaised();
+    } on ExpectedExceptionNotRaised {
+      rethrow;
+    } catch (e) {
+      if (errorMessage != null) {
+        if (!e.toString().contains(errorMessage)) {
+          throw ExpectedExceptionNotRaised(e);
+        }
       }
     }
   }
