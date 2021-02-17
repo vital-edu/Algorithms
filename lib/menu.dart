@@ -14,6 +14,7 @@ class MenuWidget extends StatelessWidget {
           Center(child: Text('Section 2')),
           _MenuItem('1'),
           _MenuItem('3'),
+          _MenuItem('10'),
         ],
       ),
     );
