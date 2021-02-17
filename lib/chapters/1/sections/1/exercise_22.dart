@@ -5,14 +5,14 @@
 // Hint: Add an argument to the recursive method that keeps track of the depth.
 
 main(List<String> args) {
-  BinarySearch searcher = BinarySearch();
+  _BinarySearch searcher = _BinarySearch();
   print(searcher.initRank(1, [1, 2, 3, 4, 5, 6, 7, 8, 9]));
   print(searcher.initRank(4, [1, 2, 3, 4, 5, 6, 7, 8, 9]));
   print(searcher.initRank(7, [1, 2, 3, 4, 5, 6, 7, 8]));
   print(searcher.initRank(10, [1, 2, 3, 4, 5, 6, 7, 8]));
 }
 
-class BinarySearch {
+class _BinarySearch {
   int initRank(int key, List<int> a) {
     return rank(key, a, 0, a.length - 1);
   }
