@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:algo/commons/numeral_text_field.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../utils/point_2d.dart';
@@ -23,6 +24,7 @@ class _Exercise1State extends State<Exercise1> {
   double _result;
   bool _isCalculating = false;
   PointsClosestDistanceCalculator _calculator;
+  int numberOfPoints = 1;
 
   void initState() {
     super.initState();
@@ -30,16 +32,13 @@ class _Exercise1State extends State<Exercise1> {
   }
 
   _calculate() async {
-    int n = int.tryParse(_controller.text);
-    if (n == null) return;
-
     setState(() {
       _result = null;
       _isCalculating = true;
     });
 
     PointsClosestDistanceCalculator calculator =
-        await compute(_generateCalculator, n);
+        await compute(_generateCalculator, numberOfPoints);
 
     setState(() {
       _result = calculator.closestDistance;
@@ -56,20 +55,12 @@ class _Exercise1State extends State<Exercise1> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Number of points'),
-                keyboardType: TextInputType.number,
-                controller: _controller,
-                onChanged: (String value) {
-                  int points = int.tryParse(value);
-                  if (points == null || points > LIMIT_OF_POINTS) {
-                    final validText = value.substring(0, value.length - 1);
-                    _controller.text = validText;
-                    _controller.selection = TextSelection.fromPosition(
-                      TextPosition(offset: validText.length),
-                    );
-                  }
-                },
+              NumeralTextField(
+                value: numberOfPoints.toString(),
+                labelText: 'Number of Points',
+                onUpdateValue: (value) =>
+                    setState(() => numberOfPoints = value),
+                maxValue: LIMIT_OF_POINTS,
               ),
               ElevatedButton(
                 child: Text('Calculate Closest Distance'),
@@ -77,7 +68,10 @@ class _Exercise1State extends State<Exercise1> {
                   _calculate();
                 },
               ),
-              if (_isCalculating) CircularProgressIndicator(),
+              if (_isCalculating)
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
               if (!_isCalculating && _result != null)
                 Text('Closest Distance: $_result'),
               if (_calculator != null)
