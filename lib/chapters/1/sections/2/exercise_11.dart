@@ -1,6 +1,11 @@
 import '../../../../utils/assert.dart';
 
 main(List<String> args) {
+  // from(String date)
+  Assert.equal(SmartDate.from('10/13/2029'), '10/13/2029');
+  Assert.raiseException(() => SmartDate.from('131/10/2029'),
+      errorMessage: 'Invalid date.');
+
   // Invalid months
   Assert.raiseException(() => SmartDate(-1, 1, 2001),
       errorMessage: 'month must be between 1 and 12');
@@ -63,8 +68,22 @@ abstract class Date {
   int get year;
 
   @override
-  String toString() {
-    throw UnimplementedError();
+  String toString() =>
+      '${month.toString().padLeft(2, '0')}/${day.toString().padLeft(2, '0')}/$year';
+
+  operator ==(Object other) {
+    if (other is String) {
+      return other == toString();
+    } else if (other is Date) {
+      return (day == other.day && month == other.month && year == other.year);
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode {
+    final twoHashes = day.hashCode + month.hashCode * 31;
+    return twoHashes + year.hashCode * 31;
   }
 }
 
@@ -115,6 +134,28 @@ class SmartDate extends Date {
     }
 
     if (month > 12 || month < 1) throw ArgumentError('invalid month');
+  }
+
+  factory SmartDate.from(String date) {
+    RegExp regExp = RegExp(r'^([\d]{1,2})/([\d]{1,2})/(\d+)$');
+
+    final matches = regExp.allMatches(date);
+    if (regExp.allMatches(date).isEmpty ||
+        matches.length != 1 ||
+        matches.first.groupCount != 3) {
+      throw ArgumentError(
+          'Invalid date. The date should be in the format "dd/mm/aaaa": $date');
+    }
+
+    int mm = int.tryParse(matches.first.group(1));
+    int dd = int.tryParse(matches.first.group(2));
+    int aaaa = int.tryParse(matches.first.group(3));
+
+    if (mm == null) throw ArgumentError('Invalid month: $mm');
+    if (dd == null) throw ArgumentError('Invalid day: $dd');
+    if (aaaa == null) throw ArgumentError('Invalid year: $aaaa');
+
+    return SmartDate(mm, dd, aaaa);
   }
 
   bool get isLeapYear {
